@@ -35,6 +35,6 @@ Lightweight JSON Schema reference parser. See [demo online](https://darosh.githu
 
 ## Alternatives
 
-See [./test/benchmark](https://darosh.github.io/json-schema-bundler/test/benchmark.html).
+See [./test/benchmark.html](https://darosh.github.io/json-schema-bundler/test/benchmark.html).
 
 - [BigstickCarpet/json-schema-ref-parser](https://github.com/BigstickCarpet/json-schema-ref-parser)
