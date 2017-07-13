@@ -24,16 +24,14 @@ Lightweight JSON Schema reference parser. See [demo online](https://darosh.githu
 
 ### Browser
 
-TODO
+[./test/index.html](./test/index.html)
 
 
 ### Node
 
-TODO
+[./test/index-http.js](./test/test-http.html) and [./test/index-fs.js](./test/test-fs.html)
 
 
 ## Alternatives
-
-TODO
 
 - [BigstickCarpet/json-schema-ref-parser](https://github.com/BigstickCarpet/json-schema-ref-parser)
