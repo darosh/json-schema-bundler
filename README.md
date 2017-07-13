@@ -21,6 +21,7 @@ Lightweight JSON Schema reference parser. See [demo online](https://darosh.githu
 
 ## Usage
 
+**Disclaimer:** Work in progress! 
 
 ### Browser
 
