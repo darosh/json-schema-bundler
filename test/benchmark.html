@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/yamljs@0.3.0/dist/yaml.min.js"></script>
+    <script src="https://darosh.github.io/json-schema-bundler/dist/schema-bundler.min.js"></script>
+
+    <script src="https://unpkg.com/json-schema-ref-parser@3.1.2/dist/ref-parser.min.js"></script>
+    <script src="https://unpkg.com/swagger-ui@3.0.18"></script>
+
+    <script>
+        var schemaUrl = 'fixtures/single/single-large.json';
+
+        function log(msg) {
+            document.getElementById('log').textContent += msg + '\n';
+        }
+
+        function a(done) {
+            var start = new Date();
+            const schema = new schemaBundler.Schema(schemaUrl);
+            schema.load()
+                .then(() => {
+                    schema.bundle();
+                    schema.deref();
+                    log('schema-bundler:         ' + (new Date() - start));
+                    done();
+                })
+                .catch(err => {
+                    done(err);
+                    done();
+                });
+        }
+
+        function b(done) {
+            var start = new Date();
+            $RefParser.dereference(schemaUrl)
+                .then(function (schema) {
+                    log('json-schema-ref-parser: ' + (new Date() - start));
+                    done();
+                })
+                .catch(function (err) {
+                    console.error(err);
+                    done();
+                });
+        }
+
+        var iterations = 10;
+
+        function iteration() {
+            if (iterations--) {
+                a(() => {
+                    b(() => {
+                        iteration();
+                    });
+                });
+            }
+        }
+
+        iteration();
+    </script>
+</head>
+<body>
+<h1>schema-bundler vs json-schema-ref-parser</h1>
+<pre id="log" style="font-size: 20px"></pre>
+</body>
+</html>
