@@ -1,0 +1,23 @@
+{
+  "External": [
+    "fixtures/openapi/yaml/petstore-separate/spec/swagger.yaml",
+    "fixtures/ref-parser/external/external.yaml",
+    "fixtures/ref-parser/external-partial/external-partial.yaml"
+  ],
+  "External Text Content": [
+    "fixtures/ref-parser/parsers/parsers.yaml"
+  ],
+  "Internal": [
+    "fixtures/ref-parser/deep/deep.yaml",
+    "fixtures/single/single-small.json",
+    "fixtures/single/single-large.json"
+  ],
+  "Circular": [
+    "fixtures/ref-parser/circular-extended/circular-extended-ancestor.yaml",
+    "fixtures/ref-parser/circular-extended/circular-extended-indirect.yaml",
+    "fixtures/ref-parser/circular-extended/circular-extended-indirect-ancestor.yaml",
+    "fixtures/ref-parser/circular-external/circular-external.yaml",
+    "fixtures/ref-parser/deep-circular/deep-circular.yaml",
+    "fixtures/ref-parser/circular-extended/circular-extended-self.yaml"
+  ]
+}
