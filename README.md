@@ -30,7 +30,7 @@ Lightweight JSON Schema reference parser. See [demo online](https://darosh.githu
 
 ### Node
 
-[./test/index-http.js](./test/test-http.html) and [./test/index-fs.js](./test/test-fs.html)
+[./test/index-http.js](./test/test-http.js) and [./test/index-fs.js](./test/test-fs.js)
 
 
 ## Alternatives
