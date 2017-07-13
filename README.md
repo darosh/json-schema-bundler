@@ -1,6 +1,6 @@
 # JSON Schema Bundler
 
-Lightweight JSON Schema reference parser. See [demo online](darosh.github.io/json-schema-bundler).
+Lightweight JSON Schema reference parser. See [demo online](https://darosh.github.io/json-schema-bundler/test/).
 
 
 ## Features
