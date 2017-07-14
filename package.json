@@ -24,7 +24,6 @@
   ],
   "license": "MIT",
   "main": "dist/schema-bundler.js",
-  "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js && webpack -p --config webpack.config.js --output-filename schema-bundler.min.js",
     "test-fs": "node test/test-fs.js",
