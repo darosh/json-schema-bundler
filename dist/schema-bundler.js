@@ -2,7 +2,7 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define("schemaBundler", [], factory);
 	else if(typeof exports === 'object')
 		exports["schemaBundler"] = factory();
 	else
@@ -360,10 +360,15 @@ var Schema = function () {
             var parts = url.split('/');
             parts.shift();
             var o = this.bundled;
+            var included = [];
             for (var i = 0; i < parts.length; i++) {
                 o = o[decodeURIComponent(parts[i])];
                 var next = o && i + 1 < parts.length ? o[decodeURIComponent(parts[i + 1])] : null;
                 if (!next && o && o.$ref && o.$ref !== url) {
+                    if (included.indexOf(o) > -1) {
+                        break;
+                    }
+                    included.push(o);
                     var rest = parts.slice(i + 1);
                     rest.unshift(o.$ref);
                     parts = rest.join('/').split('/');

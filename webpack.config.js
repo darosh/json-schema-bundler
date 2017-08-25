@@ -26,7 +26,8 @@ module.exports = {
         filename: 'schema-bundler.js',
         chunkFilename: '[chunkhash].js',
         library: 'schemaBundler',
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     module: {
         rules: [

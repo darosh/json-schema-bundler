@@ -194,9 +194,9 @@ export class Schema {
 
                         if (typeof res.data === 'string'
                             && (res.headers
-                            && res.headers['content-type']
-                            && res.headers['content-type'].indexOf('yaml') > -1
-                            || Url.extension(url).toLowerCase() === 'yaml')) {
+                                && res.headers['content-type']
+                                && res.headers['content-type'].indexOf('yaml') > -1
+                                || Url.extension(url).toLowerCase() === 'yaml')) {
 
                             try {
                                 res.data = this.yamlParse(res.data);
@@ -283,6 +283,7 @@ export class Schema {
         let parts = url.split('/');
         parts.shift();
         let o: any = this.bundled;
+        const included = [];
 
         for (let i = 0; i < parts.length; i++) {
             o = o[decodeURIComponent(parts[i])];
@@ -290,6 +291,12 @@ export class Schema {
             const next = (o && ((i + 1) < parts.length)) ? o[decodeURIComponent(parts[i + 1])] : null;
 
             if (!next && o && o.$ref && (o.$ref !== url)) {
+                if (included.indexOf(o) > -1) {
+                    break;
+                }
+
+                included.push(o);
+
                 const rest = parts.slice(i + 1);
                 rest.unshift(o.$ref);
                 parts = rest.join('/').split('/');
