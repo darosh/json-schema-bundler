@@ -234,8 +234,10 @@ var Schema = function () {
     }, {
         key: 'report',
         value: function report() {
+            var cached = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
             if (this.progress) {
-                this.progress({ total: this.totalFiles, loaded: this.loadedFiles });
+                this.progress({ total: this.totalFiles, loaded: this.loadedFiles, cached: cached });
             }
         }
     }, {
@@ -245,6 +247,9 @@ var Schema = function () {
 
             return new Promise(function (resolve, reject) {
                 if (_this4.cache[url]) {
+                    _this4.totalFiles++;
+                    _this4.loadedFiles++;
+                    _this4.report(true);
                     _this4.parseFile(_this4.cache[url], url).then(resolve);
                 } else {
                     _this4.cache[url] = true;

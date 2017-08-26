@@ -172,15 +172,18 @@ export class Schema {
         return Promise.all(promises);
     }
 
-    private report() {
+    private report(cached: boolean = false) {
         if (this.progress) {
-            this.progress({total: this.totalFiles, loaded: this.loadedFiles});
+            this.progress({total: this.totalFiles, loaded: this.loadedFiles, cached});
         }
     }
 
     private loadFile(url: string): Promise<any> {
         return new Promise((resolve, reject) => {
             if (this.cache[url]) {
+                this.totalFiles++;
+                this.loadedFiles++;
+                this.report(true);
                 this.parseFile(this.cache[url], url).then(resolve);
             } else {
                 this.cache[url] = true;
