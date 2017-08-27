@@ -332,6 +332,9 @@ var Schema = function () {
             var selfUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](url);
             var bundle = [];
             refs.forEach(function (ref) {
+                if (typeof ref.val.$ref !== 'string') {
+                    return;
+                }
                 var parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](ref.val.$ref);
                 var partUrl = Schema.getUrl(selfUrl, parsedUrl);
                 var relativePart = __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].relative(_this5.url, partUrl);

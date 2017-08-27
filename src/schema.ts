@@ -250,6 +250,10 @@ export class Schema {
         const bundle: any[] = [];
 
         refs.forEach((ref) => {
+            if (typeof ref.val.$ref !== 'string') {
+                return
+            }
+
             const parsedUrl = new Url(ref.val.$ref);
             const partUrl = Schema.getUrl(selfUrl, parsedUrl);
             const relativePart = Url.relative(this.url, partUrl);
