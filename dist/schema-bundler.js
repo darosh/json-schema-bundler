@@ -190,7 +190,7 @@ var Schema = function () {
             var owner = arguments[3];
             var key = arguments[4];
 
-            if (obj && obj.$ref) {
+            if (obj && obj.$ref && typeof obj.$ref === 'string') {
                 refs.push({ val: obj, owner: owner, key: key });
             }
             for (var i = 0, keys = Object.keys(obj); i < keys.length; i++) {
@@ -332,9 +332,6 @@ var Schema = function () {
             var selfUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](url);
             var bundle = [];
             refs.forEach(function (ref) {
-                if (typeof ref.val.$ref !== 'string') {
-                    return;
-                }
                 var parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](ref.val.$ref);
                 var partUrl = Schema.getUrl(selfUrl, parsedUrl);
                 var relativePart = __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].relative(_this5.url, partUrl);

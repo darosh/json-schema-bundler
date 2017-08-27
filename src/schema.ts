@@ -128,7 +128,7 @@ export class Schema {
                     index: any[] = [],
                     owner?: any,
                     key?: string): IRef[] {
-        if (obj && obj.$ref) {
+        if (obj && obj.$ref && (typeof obj.$ref === 'string')) {
             refs.push({val: obj, owner, key});
         }
 
@@ -250,10 +250,6 @@ export class Schema {
         const bundle: any[] = [];
 
         refs.forEach((ref) => {
-            if (typeof ref.val.$ref !== 'string') {
-                return
-            }
-
             const parsedUrl = new Url(ref.val.$ref);
             const partUrl = Schema.getUrl(selfUrl, parsedUrl);
             const relativePart = Url.relative(this.url, partUrl);
