@@ -125,6 +125,7 @@ var Schema = function () {
             var _this = this;
 
             var direct = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+            var clean = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
             var refs = this.refs;
             var cache = {};
@@ -137,6 +138,9 @@ var Schema = function () {
                         ref.owner[ref.key] = cache[ref.val.$ref].val;
                     }
                 });
+                if (!clean) {
+                    return;
+                }
                 var parents = {};
                 var leftovers = refs.filter(function (ref) {
                     return ref.val === ref.owner[ref.key];
@@ -151,18 +155,21 @@ var Schema = function () {
                     parents[p] = true;
                     if (!cache[p] && !leftovers[k]) {
                         var o = cache[k];
+                        // console.log('deleting', o.key)
                         delete o.owner[o.key];
                     }
                 });
                 Object.keys(parents).forEach(function (k) {
                     var o = _this.getObjectByPath(_this.bundled, k, false);
                     if (o.val && Object.keys(o.val).length === 0) {
+                        // console.log('deleting', o.key)
                         delete o.owner[o.key];
                     }
                 });
                 var original = this.cache[this.url];
                 for (var key in this.bundled) {
                     if (!original.hasOwnProperty(key)) {
+                        // console.log('deleting', key)
                         delete this.bundled[key];
                     }
                 }
