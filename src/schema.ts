@@ -12,7 +12,11 @@ interface IRef {
 
 export class Schema {
   private static getUrl(parsedBase: Url, parsedUrl: Url) {
-    return Url.join(parsedBase.base, parsedUrl.path || parsedBase.file);
+    if (/^[a-z][a-z0-9+.-]*:/.test(parsedUrl.url)) {
+        return parsedUrl.url;
+    } else {
+        return Url.join(parsedBase.base, parsedUrl.path || parsedBase.file);
+    }
   }
 
   private static isRef(obj: any) {

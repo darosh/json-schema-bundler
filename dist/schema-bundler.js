@@ -407,7 +407,11 @@ var Schema = function () {
     }], [{
         key: 'getUrl',
         value: function getUrl(parsedBase, parsedUrl) {
-            return __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].join(parsedBase.base, parsedUrl.path || parsedBase.file);
+            if (/^[a-z][a-z0-9+.-]*:/.test(parsedUrl.url)) {
+                return parsedUrl.url;
+            } else {
+                return __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].join(parsedBase.base, parsedUrl.path || parsedBase.file);
+            }
         }
     }, {
         key: 'isRef',
