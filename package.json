@@ -1,7 +1,7 @@
 {
   "name": "json-schema-bundler",
   "description": "Lightweight JSON Schema reference parser",
-  "version": "0.0.9",
+  "version": "0.1.10",
   "author": "Jan Forst <ensonador@gmail.com>",
   "browser": "dist/schema-bundler.min.js",
   "bugs": {

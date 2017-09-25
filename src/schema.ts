@@ -256,7 +256,7 @@ export class Schema {
       const path = this.bundledPath(relativePart, refUrl.hash);
       const t = this.getObjectByUrl(refUrl);
 
-      if (t.val && (typeof t.val === 'object') && Object.keys(t.val).length) {
+      if (t.val && (typeof t.val === 'object')) {
         const o = this.getObjectByPath(this.bundled, path);
 
         if (Schema.isRef(o.val) && (!o.val.$ref || (o.val.$ref !== t.val.$ref))) {

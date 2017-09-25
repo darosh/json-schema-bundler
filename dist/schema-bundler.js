@@ -343,7 +343,7 @@ var Schema = function () {
                 var relativePart = __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].relative(_this5.url, partUrl);
                 var path = _this5.bundledPath(relativePart, refUrl.hash);
                 var t = _this5.getObjectByUrl(refUrl);
-                if (t.val && _typeof(t.val) === 'object' && Object.keys(t.val).length) {
+                if (t.val && _typeof(t.val) === 'object') {
                     var o = _this5.getObjectByPath(_this5.bundled, path);
                     if (Schema.isRef(o.val) && (!o.val.$ref || o.val.$ref !== t.val.$ref)) {
                         if (t.val.$ref) {
