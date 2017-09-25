@@ -97,11 +97,9 @@ var Schema = function () {
         this.cache = {};
         this.totalFiles = 0;
         this.loadedFiles = 0;
-        // private DEFINITIONS: string = '$def';
         this.DEFINITIONS = 'definitions';
         this.url = url;
         this.progress = progress;
-        this.parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](this.url);
         this.yamlParse = yamlParse || jsyaml.load;
         this.httpGet = httpGet || axios.get;
     }
@@ -155,21 +153,18 @@ var Schema = function () {
                     parents[p] = true;
                     if (!cache[p] && !leftovers[k]) {
                         var o = cache[k];
-                        // console.log('deleting', o.key)
                         delete o.owner[o.key];
                     }
                 });
                 Object.keys(parents).forEach(function (k) {
                     var o = _this.getObjectByPath(_this.bundled, k, false);
                     if (o.val && Object.keys(o.val).length === 0) {
-                        // console.log('deleting', o.key)
                         delete o.owner[o.key];
                     }
                 });
                 var original = this.cache[this.url];
                 for (var key in this.bundled) {
                     if (!original.hasOwnProperty(key)) {
-                        // console.log('deleting', key)
                         delete this.bundled[key];
                     }
                 }
@@ -211,15 +206,15 @@ var Schema = function () {
         }
     }, {
         key: 'getUrls',
-        value: function getUrls(refs, parsedBase) {
+        value: function getUrls(refs, url) {
             var _this2 = this;
 
             var urls = {};
             refs.forEach(function (ref) {
-                var parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](ref.val.$ref);
-                var url = Schema.getUrl(parsedBase, parsedUrl);
-                if (!_this2.cache[url] && !urls[url] && parsedUrl.path) {
-                    urls[url] = true;
+                var parsedUrl = new URL(ref.val.$ref, url);
+                var u = parsedUrl.origin + parsedUrl.pathname;
+                if (!_this2.cache[u] && !urls[u] && parsedUrl.pathname) {
+                    urls[u] = true;
                 }
             });
             return Object.keys(urls);
@@ -230,8 +225,7 @@ var Schema = function () {
             var _this3 = this;
 
             var refs = this.getRefs(json);
-            var parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](url);
-            var urls = this.getUrls(refs, parsedUrl);
+            var urls = this.getUrls(refs, url);
             var promises = [];
             urls.forEach(function (u) {
                 promises.push(_this3.loadFile(u));
@@ -280,6 +274,11 @@ var Schema = function () {
                 }
             });
         }
+        /**
+         * @param root
+         * @param {string} path #/definitions/in/root/object
+         */
+
     }, {
         key: 'getObjectByPath',
         value: function getObjectByPath(root, path) {
@@ -326,8 +325,8 @@ var Schema = function () {
         }
     }, {
         key: 'getObjectByUrl',
-        value: function getObjectByUrl(parsedBase, parsedUrl) {
-            var url = Schema.getUrl(parsedBase, parsedUrl);
+        value: function getObjectByUrl(parsedUrl) {
+            var url = parsedUrl.origin + parsedUrl.pathname;
             return this.getObjectByPath(this.cache[url], parsedUrl.hash);
         }
     }, {
@@ -336,14 +335,14 @@ var Schema = function () {
             var _this5 = this;
 
             var refs = this.getRefs(item);
-            var selfUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](url);
+            var rootUrl = new URL(url, this.url);
             var bundle = [];
             refs.forEach(function (ref) {
-                var parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](ref.val.$ref);
-                var partUrl = Schema.getUrl(selfUrl, parsedUrl);
+                var refUrl = new URL(ref.val.$ref, rootUrl.href);
+                var partUrl = refUrl.origin + refUrl.pathname;
                 var relativePart = __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].relative(_this5.url, partUrl);
-                var path = _this5.bundledPath(relativePart, parsedUrl.hash);
-                var t = _this5.getObjectByUrl(selfUrl, parsedUrl);
+                var path = _this5.bundledPath(relativePart, refUrl.hash);
+                var t = _this5.getObjectByUrl(refUrl);
                 if (t.val && _typeof(t.val) === 'object' && Object.keys(t.val).length) {
                     var o = _this5.getObjectByPath(_this5.bundled, path);
                     if (Schema.isRef(o.val) && (!o.val.$ref || o.val.$ref !== t.val.$ref)) {
@@ -405,15 +404,6 @@ var Schema = function () {
             });
         }
     }], [{
-        key: 'getUrl',
-        value: function getUrl(parsedBase, parsedUrl) {
-            if (/^[a-z][a-z0-9+.-]*:/.test(parsedUrl.url)) {
-                return parsedUrl.url;
-            } else {
-                return __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].join(parsedBase.base, parsedUrl.path || parsedBase.file);
-            }
-        }
-    }, {
         key: 'isRef',
         value: function isRef(obj) {
             return Object.keys(obj).length - (obj.$ref ? 1 : 0) === 0;
@@ -454,14 +444,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Url = function () {
-    _createClass(Url, null, [{
-        key: 'join',
-        value: function join(base, file) {
-            var hash = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    function Url() {
+        _classCallCheck(this, Url);
+    }
 
-            return Url.resolve(base + '/' + file) + (hash ? '#' + hash : '');
-        }
-    }, {
+    _createClass(Url, null, [{
         key: 'relative',
         value: function relative(u1, u2) {
             var s1 = u1.split('/');
@@ -477,40 +464,7 @@ var Url = function () {
             var s = url.split('.');
             return s[s.length - 1];
         }
-    }, {
-        key: 'resolve',
-        value: function resolve(url) {
-            var path = url.split('/');
-            // from https://github.com/defunctzombie/node-url
-            var up = 0;
-            for (var i = path.length; i > 0; i--) {
-                var last = path[i];
-                if (last === '.') {
-                    path.splice(i, 1);
-                } else if (last === '..') {
-                    path.splice(i, 1);
-                    up++;
-                } else if (up) {
-                    path.splice(i, 1);
-                    up--;
-                }
-            }
-            return path.join('/');
-        }
     }]);
-
-    function Url(url) {
-        _classCallCheck(this, Url);
-
-        this.url = url.replace(/ /g, '%20');
-        var hashSplit = this.url.split('#');
-        this.path = hashSplit[0];
-        this.hash = hashSplit[1];
-        var pathSplit = this.path.split('/');
-        this.file = pathSplit.pop();
-        this.base = pathSplit.join('/');
-        this.isRelative = pathSplit[1] === '' && pathSplit[0][pathSplit[0].length - 1] === ':';
-    }
 
     return Url;
 }();

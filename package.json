@@ -1,9 +1,12 @@
 {
   "name": "json-schema-bundler",
   "description": "Lightweight JSON Schema reference parser",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Jan Forst <ensonador@gmail.com>",
   "browser": "dist/schema-bundler.min.js",
+  "bugs": {
+    "url": "https://github.com/darosh/json-schema-bundler/issues"
+  },
   "devDependencies": {
     "axios": "^0.16.2",
     "babel-core": "^6.25.0",
@@ -17,6 +20,7 @@
     "typescript": "^2.4.1",
     "webpack": "^3.2.0"
   },
+  "homepage": "https://darosh.github.io/json-schema-bundler/test/",
   "keywords": [
     "json",
     "json-schema",
@@ -24,6 +28,10 @@
   ],
   "license": "MIT",
   "main": "dist/schema-bundler.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darosh/json-schema-bundler.git"
+  },
   "scripts": {
     "build": "webpack --config webpack.config.js && webpack -p --config webpack.config.js --output-filename schema-bundler.min.js",
     "test-fs": "node test/test-fs.js",

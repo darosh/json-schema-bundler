@@ -11,14 +11,6 @@ interface IRef {
 }
 
 export class Schema {
-  private static getUrl(parsedBase: Url, parsedUrl: Url) {
-    if (/^[a-z][a-z0-9+.-]*:/.test(parsedUrl.url)) {
-        return parsedUrl.url;
-    } else {
-        return Url.join(parsedBase.base, parsedUrl.path || parsedBase.file);
-    }
-  }
-
   private static isRef(obj: any) {
     return (Object.keys(obj).length - (obj.$ref ? 1 : 0)) === 0;
   }
@@ -27,14 +19,12 @@ export class Schema {
   public bundled: { [index: string]: any };
 
   private url: string;
-  private parsedUrl: Url;
   private progress?: (stats: any) => void;
   private totalFiles: number = 0;
   private loadedFiles: number = 0;
   private yamlParse: (yaml: string) => any;
   private httpGet: (url: string) => Promise<any>;
   private refs: IRef[];
-  // private DEFINITIONS: string = '$def';
   private DEFINITIONS: string = 'definitions';
 
   constructor(url: string,
@@ -43,7 +33,6 @@ export class Schema {
               httpGet?: (url: string) => Promise<any>) {
     this.url = url;
     this.progress = progress;
-    this.parsedUrl = new Url(this.url);
     this.yamlParse = yamlParse || jsyaml.load;
     this.httpGet = httpGet || axios.get;
   }
@@ -94,7 +83,6 @@ export class Schema {
 
         if (!cache[p] && !leftovers[k as any]) {
           const o = cache[k];
-          // console.log('deleting', o.key)
           delete  o.owner[o.key];
         }
       });
@@ -103,7 +91,6 @@ export class Schema {
         const o = this.getObjectByPath(this.bundled, k, false);
 
         if (o.val && (Object.keys(o.val).length === 0)) {
-          // console.log('deleting', o.key)
           delete o.owner[o.key];
         }
       });
@@ -112,7 +99,6 @@ export class Schema {
 
       for (const key in this.bundled) {
         if (!original.hasOwnProperty(key)) {
-          // console.log('deleting', key)
           delete this.bundled[key];
         }
       }
@@ -155,15 +141,15 @@ export class Schema {
     return refs;
   }
 
-  private getUrls(refs: IRef[], parsedBase: Url) {
+  private getUrls(refs: IRef[], url: string): string[] {
     const urls: { [url: string]: boolean } = {};
 
     refs.forEach((ref) => {
-      const parsedUrl = new Url(ref.val.$ref);
-      const url = Schema.getUrl(parsedBase, parsedUrl);
+      const parsedUrl = new URL(ref.val.$ref, url);
+      const u = parsedUrl.origin + parsedUrl.pathname;
 
-      if (!this.cache[url] && !urls[url] && parsedUrl.path) {
-        urls[url] = true;
+      if (!this.cache[u] && !urls[u] && parsedUrl.pathname) {
+        urls[u] = true;
       }
     });
 
@@ -172,8 +158,7 @@ export class Schema {
 
   private parseFile(json: any, url: string) {
     const refs = this.getRefs(json);
-    const parsedUrl = new Url(url);
-    const urls = this.getUrls(refs, parsedUrl);
+    const urls = this.getUrls(refs, url);
     const promises: any[] = [];
 
     urls.forEach((u) => {
@@ -229,6 +214,10 @@ export class Schema {
     });
   }
 
+  /**
+   * @param root
+   * @param {string} path #/definitions/in/root/object
+   */
   private getObjectByPath(root: any, path: string, create: boolean = true): any {
     const parts = (path || '').split('/');
     parts.shift();
@@ -250,22 +239,22 @@ export class Schema {
     return {val: o, owner, key};
   }
 
-  private getObjectByUrl(parsedBase: Url, parsedUrl: Url): any {
-    const url = Schema.getUrl(parsedBase, parsedUrl);
+  private getObjectByUrl(parsedUrl: URL): any {
+    const url = parsedUrl.origin + parsedUrl.pathname;
     return this.getObjectByPath(this.cache[url], parsedUrl.hash);
   }
 
   private bundlePart(item: any, url: string): IRef[] {
     const refs = this.getRefs(item);
-    const selfUrl = new Url(url);
+    const rootUrl = new URL(url, this.url);
     const bundle: any[] = [];
 
     refs.forEach((ref) => {
-      const parsedUrl = new Url(ref.val.$ref);
-      const partUrl = Schema.getUrl(selfUrl, parsedUrl);
+      const refUrl = new URL(ref.val.$ref, rootUrl.href);
+      const partUrl = refUrl.origin + refUrl.pathname;
       const relativePart = Url.relative(this.url, partUrl);
-      const path = this.bundledPath(relativePart, parsedUrl.hash);
-      const t = this.getObjectByUrl(selfUrl, parsedUrl);
+      const path = this.bundledPath(relativePart, refUrl.hash);
+      const t = this.getObjectByUrl(refUrl);
 
       if (t.val && (typeof t.val === 'object') && Object.keys(t.val).length) {
         const o = this.getObjectByPath(this.bundled, path);

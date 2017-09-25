@@ -169,8 +169,11 @@
                 this.error = false;
                 this.fail = false;
 
+                const u = new URL(val, location.href);
+                console.log('loading', u.toString())
+
                 let start = new Date();
-                const schema = new schemaBundler.Schema(val, stat => {
+                const schema = new schemaBundler.Schema(u.toString(), stat => {
                     this.progress = Math.round(100 * stat.loaded / stat.total);
 
                     if (this.progress < 100) {
