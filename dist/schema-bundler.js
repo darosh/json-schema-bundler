@@ -102,7 +102,7 @@ var Schema = function () {
         this.url = url;
         this.progress = progress;
         this.parsedUrl = new __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */](this.url);
-        this.yamlParse = yamlParse || YAML.parse;
+        this.yamlParse = yamlParse || jsyaml.load;
         this.httpGet = httpGet || axios.get;
     }
 

@@ -1,7 +1,7 @@
 import deep from './deep';
 import Url from './url';
 
-declare const YAML: any;
+declare const jsyaml: any;
 declare const axios: any;
 
 interface IRef {
@@ -44,7 +44,7 @@ export class Schema {
     this.url = url;
     this.progress = progress;
     this.parsedUrl = new Url(this.url);
-    this.yamlParse = yamlParse || YAML.parse;
+    this.yamlParse = yamlParse || jsyaml.load;
     this.httpGet = httpGet || axios.get;
   }
 
