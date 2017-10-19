@@ -10,6 +10,7 @@
     "jsx": "preserve",
     "target": "es2016",
     "module": "es2015",
+    "declaration": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noUnusedLocals": true,

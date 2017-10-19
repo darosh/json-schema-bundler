@@ -19,11 +19,11 @@ var babelOptions = {
 module.exports = {
     cache: true,
     entry: {
-        main: './src/schema.ts'
+        main: './index.ts'
     },
     output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: 'schema-bundler.js',
+        path: path.resolve(__dirname, './'),
+        filename: 'index.js',
         chunkFilename: '[chunkhash].js',
         library: 'schemaBundler',
         libraryTarget: 'umd',

@@ -80,16 +80,36 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Schema", function() { return Schema; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__deep__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__url__ = __webpack_require__(2);
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-
-
+function deep(obj) {
+    if (obj === null || (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object') {
+        return obj;
+    }
+    var temp = obj.constructor();
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            temp[key] = deep(obj[key]);
+        }
+    }
+    return temp;
+}
+function relativeUrl(u1, u2) {
+    var s1 = u1.split('/');
+    var s2 = u2.split('/');
+    while (s2[0] !== undefined && s1.shift() === s2[0]) {
+        s2.shift();
+    }
+    return s2.join('/');
+}
+function extensionUrl(url) {
+    var s = url.split('.');
+    return s[s.length - 1];
+}
 var Schema = function () {
     function Schema(url, progress, yamlParse, httpGet) {
         _classCallCheck(this, Schema);
@@ -112,7 +132,7 @@ var Schema = function () {
     }, {
         key: 'bundle',
         value: function bundle() {
-            this.bundled = Object(__WEBPACK_IMPORTED_MODULE_0__deep__["a" /* default */])(this.cache[this.url]);
+            this.bundled = deep(this.cache[this.url]);
             this.refs = this.bundlePart(this.bundled, this.url);
             this.refs = Object.keys(this.cache).length === 1 ? this.refs : this.getRefs(this.bundled);
             this.simplifyRefs(this.refs);
@@ -259,7 +279,7 @@ var Schema = function () {
                     _this4.httpGet(url).then(function (res) {
                         _this4.loadedFiles++;
                         _this4.report();
-                        if (typeof res.data === 'string' && (res.headers && res.headers['content-type'] && res.headers['content-type'].indexOf('yaml') > -1 || __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].extension(url).toLowerCase() === 'yaml')) {
+                        if (typeof res.data === 'string' && (res.headers && res.headers['content-type'] && res.headers['content-type'].indexOf('yaml') > -1 || extensionUrl(url).toLowerCase() === 'yaml')) {
                             try {
                                 res.data = _this4.yamlParse(res.data);
                             } catch (ign) {
@@ -340,7 +360,7 @@ var Schema = function () {
             refs.forEach(function (ref) {
                 var refUrl = new URL(ref.val.$ref, rootUrl.href);
                 var partUrl = refUrl.origin + refUrl.pathname;
-                var relativePart = __WEBPACK_IMPORTED_MODULE_1__url__["a" /* default */].relative(_this5.url, partUrl);
+                var relativePart = relativeUrl(_this5.url, partUrl);
                 var path = _this5.bundledPath(relativePart, refUrl.hash);
                 var t = _this5.getObjectByUrl(refUrl);
                 if (t.val && _typeof(t.val) === 'object') {
@@ -349,7 +369,7 @@ var Schema = function () {
                         if (t.val.$ref) {
                             o.val.$ref = t.val.$ref;
                         } else {
-                            Object.assign(o.val, Object(__WEBPACK_IMPORTED_MODULE_0__deep__["a" /* default */])(t.val));
+                            Object.assign(o.val, deep(t.val));
                         }
                         ref.val.$ref = path;
                         bundle.push([o.val, partUrl]);
@@ -412,64 +432,6 @@ var Schema = function () {
 
     return Schema;
 }();
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = deep;
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-function deep(obj) {
-    if (obj === null || (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) !== 'object') {
-        return obj;
-    }
-    var temp = obj.constructor();
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            temp[key] = deep(obj[key]);
-        }
-    }
-    return temp;
-}
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Url = function () {
-    function Url() {
-        _classCallCheck(this, Url);
-    }
-
-    _createClass(Url, null, [{
-        key: 'relative',
-        value: function relative(u1, u2) {
-            var s1 = u1.split('/');
-            var s2 = u2.split('/');
-            while (s2[0] !== undefined && s1.shift() === s2[0]) {
-                s2.shift();
-            }
-            return s2.join('/');
-        }
-    }, {
-        key: 'extension',
-        value: function extension(url) {
-            var s = url.split('.');
-            return s[s.length - 1];
-        }
-    }]);
-
-    return Url;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (Url);
 
 /***/ })
 /******/ ]);

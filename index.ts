@@ -1,8 +1,37 @@
-import deep from './deep';
-import Url from './url';
-
 declare const jsyaml: any;
 declare const axios: any;
+
+function deep(obj: any) {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  const temp = obj.constructor();
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      temp[key] = deep(obj[key]);
+    }
+  }
+
+  return temp;
+}
+
+function relativeUrl(u1: string, u2: string) {
+  const s1 = u1.split('/');
+  const s2 = u2.split('/');
+
+  while ((s2[0] !== undefined) && (s1.shift() === s2[0])) {
+    s2.shift();
+  }
+
+  return s2.join('/');
+}
+
+function extensionUrl(url: string) {
+  const s = url.split('.');
+  return s[s.length - 1];
+}
 
 interface IRef {
   val: any;
@@ -195,7 +224,7 @@ export class Schema {
               && (res.headers
                 && res.headers['content-type']
                 && res.headers['content-type'].indexOf('yaml') > -1
-                || Url.extension(url).toLowerCase() === 'yaml')) {
+                || extensionUrl(url).toLowerCase() === 'yaml')) {
 
               try {
                 res.data = this.yamlParse(res.data);
@@ -252,7 +281,7 @@ export class Schema {
     refs.forEach((ref) => {
       const refUrl = new URL(ref.val.$ref, rootUrl.href);
       const partUrl = refUrl.origin + refUrl.pathname;
-      const relativePart = Url.relative(this.url, partUrl);
+      const relativePart = relativeUrl(this.url, partUrl);
       const path = this.bundledPath(relativePart, refUrl.hash);
       const t = this.getObjectByUrl(refUrl);
 
